@@ -7,6 +7,7 @@ import com.jobtracker.backend.entity.User;
 import com.jobtracker.backend.repository.ResumeRepository;
 import com.jobtracker.backend.repository.UserRepository;
 import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ public class ResumeService {
     }
     
     @Transactional
-    public ResumeResponse upload(MultipartFile file) throws IOException {
+    public ResumeResponse upload(MultipartFile file) throws IOException, TikaException {
         if (file.isEmpty()) {
             throw new RuntimeException("File is empty");
         }

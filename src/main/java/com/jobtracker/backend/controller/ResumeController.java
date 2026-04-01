@@ -2,6 +2,8 @@ package com.jobtracker.backend.controller;
 
 import com.jobtracker.backend.dto.response.ResumeResponse;
 import com.jobtracker.backend.service.ResumeService;
+
+import org.apache.tika.exception.TikaException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +24,7 @@ public class ResumeController {
 
     @PostMapping("/upload")
     public ResponseEntity<ResumeResponse> upload(
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam("file") MultipartFile file) throws IOException, TikaException {
         return ResponseEntity.ok(resumeService.upload(file));
     }
 
