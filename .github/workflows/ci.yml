@@ -7,6 +7,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: job_tracker
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - uses: actions/checkout@v4
       - name: Set up Java 17
@@ -14,7 +23,19 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build and test
+      - name: Run tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/job_tracker?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: rootpassword
+          APP_JWT_SECRET: 3f8b2c1d4e9a7f6b0c5d2e8f1a4b7c0d3e6f9a2b5c8d1e4f7a0b3c6d9e2f5a8b
+          APP_JWT_EXPIRATION_MS: 86400000
+          APP_GEMINI_API_KEY: dummy_key_for_tests
+          APP_GEMINI_URL: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent
+          SPRING_MAIL_HOST: smtp.gmail.com
+          SPRING_MAIL_PORT: 587
+          SPRING_MAIL_USERNAME: test@gmail.com
+          SPRING_MAIL_PASSWORD: dummy_password
         run: mvn test --no-transfer-progress
       - name: Build JAR
         run: mvn package -DskipTests --no-transfer-progress
